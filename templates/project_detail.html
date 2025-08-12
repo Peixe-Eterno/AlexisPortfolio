@@ -1,0 +1,274 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.title }} - Alexis Daniel{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Project Header -->
+            <div class="project-header mb-4">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url_for('projects') }}">Projects</a></li>
+                        <li class="breadcrumb-item active">{{ project.title }}</li>
+                    </ol>
+                </nav>
+                
+                <h1 class="mb-3">{{ project.title }}</h1>
+                
+                <!-- Project Stats -->
+                <div class="project-stats mb-3">
+                    <span class="me-3">
+                        <i class="fas fa-heart text-danger"></i>
+                        <span id="like-count">{{ project.like_count }}</span>
+                    </span>
+                    <span class="me-3">
+                        <i class="fas fa-comment text-primary"></i>
+                        {{ project.comment_count }}
+                    </span>
+                    <span class="text-muted">
+                        <i class="fas fa-calendar"></i>
+                        {{ project.created_at.strftime('%B %d, %Y') }}
+                    </span>
+                </div>
+                
+                <!-- Technologies -->
+                {% if project.technologies %}
+                <div class="project-tech mb-4">
+                    {% for tech in project.technologies.split(',') %}
+                    <span class="badge bg-secondary me-1 mb-1">{{ tech.strip() }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Project Image -->
+            {% if project.image_url %}
+            <div class="project-image mb-4">
+                <img src="{{ url_for('static', filename=project.image_url) }}" 
+                     alt="{{ project.title }}" class="img-fluid rounded shadow">
+            </div>
+            {% endif %}
+            
+            <!-- Project Content -->
+            <div class="project-content mb-5">
+                <h3 class="mb-3">Description</h3>
+                <p class="lead">{{ project.description }}</p>
+                
+                {% if project.content %}
+                <div class="content-text mt-4">
+                    {{ project.content|safe }}
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Project Actions -->
+            <div class="project-actions mb-5">
+                <div class="row">
+                    <div class="col-md-6">
+                        <!-- Like Button -->
+                        {% if current_user.is_authenticated %}
+                        <button id="like-btn" class="btn {{ 'btn-danger' if user_liked else 'btn-outline-danger' }} me-2"
+                                data-project-id="{{ project.id }}"
+                                data-liked="{{ 'true' if user_liked else 'false' }}">
+                            <i class="fas fa-heart"></i>
+                            <span id="like-text">{{ 'Unlike' if user_liked else 'Like' }}</span>
+                        </button>
+                        {% else %}
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-danger me-2">
+                            <i class="fas fa-heart"></i> Like
+                        </a>
+                        {% endif %}
+                        
+                        <!-- Share Button -->
+                        <button class="btn btn-outline-primary me-2" onclick="shareOnLinkedIn()">
+                            <i class="fab fa-linkedin"></i> Share
+                        </button>
+                    </div>
+                    
+                    <div class="col-md-6 text-md-end">
+                        {% if project.demo_url %}
+                        <a href="{{ project.demo_url }}" target="_blank" class="btn btn-gold me-2">
+                            <i class="fas fa-external-link-alt"></i> Live Demo
+                        </a>
+                        {% endif %}
+                        
+                        {% if project.github_url %}
+                        <a href="{{ project.github_url }}" target="_blank" class="btn btn-outline-dark">
+                            <i class="fab fa-github"></i> GitHub
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Comments Section -->
+            <div class="comments-section">
+                <h3 class="mb-4">Comments ({{ comments|length }})</h3>
+                
+                <!-- Comment Form -->
+                {% if current_user.is_authenticated %}
+                <div class="comment-form mb-4">
+                    <form method="POST" action="{{ url_for('comment_project', id=project.id) }}">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ form.content.label(class="form-label") }}
+                            {{ form.content(class="form-control", rows="3", placeholder="Share your thoughts about this project...") }}
+                            {% if form.content.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.content.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-comment"></i> Post Comment
+                        </button>
+                    </form>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <a href="{{ url_for('login') }}">Login</a> to leave a comment.
+                </div>
+                {% endif %}
+                
+                <!-- Comments List -->
+                <div class="comments-list">
+                    {% for comment in comments %}
+                    <div class="comment mb-4 p-3 border rounded">
+                        <div class="comment-header d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <strong>{{ comment.author.first_name }} {{ comment.author.last_name }}</strong>
+                                <small class="text-muted">@{{ comment.author.username }}</small>
+                            </div>
+                            <small class="text-muted">{{ comment.created_at.strftime('%B %d, %Y at %I:%M %p') }}</small>
+                        </div>
+                        <div class="comment-content">
+                            {{ comment.content }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    {% if not comments %}
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-comment fa-3x mb-3"></i>
+                        <p>No comments yet. Be the first to share your thoughts!</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="sidebar">
+                <!-- Project Info -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Project Information</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if project.category %}
+                        <p class="mb-2">
+                            <strong>Category:</strong> {{ project.category.name }}
+                        </p>
+                        {% endif %}
+                        
+                        <p class="mb-2">
+                            <strong>Created:</strong> {{ project.created_at.strftime('%B %d, %Y') }}
+                        </p>
+                        
+                        {% if project.updated_at and project.updated_at != project.created_at %}
+                        <p class="mb-2">
+                            <strong>Updated:</strong> {{ project.updated_at.strftime('%B %d, %Y') }}
+                        </p>
+                        {% endif %}
+                        
+                        {% if project.is_featured %}
+                        <span class="badge bg-gold">Featured Project</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Admin Actions -->
+                {% if current_user.is_authenticated and current_user.is_admin %}
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Admin Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <a href="{{ url_for('admin_edit_project', id=project.id) }}" class="btn btn-warning btn-sm me-2 mb-2">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <form method="POST" action="{{ url_for('admin_delete_project', id=project.id) }}" 
+                              class="d-inline" onsubmit="return confirm('Are you sure you want to delete this project?')">
+                            <button type="submit" class="btn btn-danger btn-sm mb-2">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function shareOnLinkedIn() {
+    const url = encodeURIComponent(window.location.href);
+    const title = encodeURIComponent('{{ project.title }}');
+    const summary = encodeURIComponent('{{ project.description[:250] }}');
+    
+    const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}&title=${title}&summary=${summary}`;
+    window.open(linkedinUrl, '_blank', 'width=600,height=400');
+}
+</script>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const likeBtn = document.getElementById('like-btn');
+    
+    if (likeBtn) {
+        likeBtn.addEventListener('click', function() {
+            const projectId = this.dataset.projectId;
+            const isLiked = this.dataset.liked === 'true';
+            
+            fetch(`/like_project/${projectId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update button appearance
+                if (data.liked) {
+                    this.classList.remove('btn-outline-danger');
+                    this.classList.add('btn-danger');
+                    this.dataset.liked = 'true';
+                    document.getElementById('like-text').textContent = 'Unlike';
+                } else {
+                    this.classList.remove('btn-danger');
+                    this.classList.add('btn-outline-danger');
+                    this.dataset.liked = 'false';
+                    document.getElementById('like-text').textContent = 'Like';
+                }
+                
+                // Update like count
+                document.getElementById('like-count').textContent = data.like_count;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Alexis Daniel{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Admin Dashboard</h1>
+                <a href="{{ url_for('admin_new_project') }}" class="btn btn-gold">
+                    <i class="fas fa-plus me-2"></i>New Project
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Stats Cards -->
+    <div class="row mb-5">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h3 class="mb-0">{{ total_projects }}</h3>
+                            <p class="mb-0">Total Projects</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-folder fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h3 class="mb-0">{{ published_projects }}</h3>
+                            <p class="mb-0">Published</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-eye fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h3 class="mb-0">{{ total_users }}</h3>
+                            <p class="mb-0">Registered Users</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h3 class="mb-0">{{ total_comments }}</h3>
+                            <p class="mb-0">Total Comments</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-comments fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Activity -->
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Projects</h5>
+                    <a href="{{ url_for('admin_projects') }}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if recent_projects %}
+                    <div class="list-group list-group-flush">
+                        {% for project in recent_projects %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">{{ project.title }}</h6>
+                                <small class="text-muted">{{ project.created_at.strftime('%B %d, %Y') }}</small>
+                                {% if not project.is_published %}
+                                <span class="badge bg-warning">Draft</span>
+                                {% endif %}
+                                {% if project.is_featured %}
+                                <span class="badge bg-gold">Featured</span>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <a href="{{ url_for('admin_edit_project', id=project.id) }}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted mb-0">No projects created yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Recent Comments</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_comments %}
+                    <div class="list-group list-group-flush">
+                        {% for comment in recent_comments %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ comment.author.first_name }} {{ comment.author.last_name }}</strong>
+                                <small class="text-muted">{{ comment.created_at.strftime('%B %d, %Y') }}</small>
+                            </div>
+                            <p class="mb-1">{{ comment.content[:100] }}{% if comment.content|length > 100 %}...{% endif %}</p>
+                            <small class="text-muted">on <a href="{{ url_for('project_detail', id=comment.project.id) }}">{{ comment.project.title }}</a></small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted mb-0">No comments yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <a href="{{ url_for('admin_new_project') }}" class="btn btn-primary w-100">
+                                <i class="fas fa-plus me-2"></i>Create New Project
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="{{ url_for('admin_projects') }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-folder me-2"></i>Manage Projects
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="{{ url_for('admin_about') }}" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-user me-2"></i>Edit About Section
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

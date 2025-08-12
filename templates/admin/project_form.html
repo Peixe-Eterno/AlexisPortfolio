@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>{{ title }}</h1>
+                <a href="{{ url_for('admin_projects') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Projects
+                </a>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="row">
+                            <div class="col-md-8">
+                                <!-- Title -->
+                                <div class="mb-3">
+                                    {{ form.title.label(class="form-label") }}
+                                    {{ form.title(class="form-control") }}
+                                    {% if form.title.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.title.errors %}
+                                                <small>{{ error }}</small><br>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Description -->
+                                <div class="mb-3">
+                                    {{ form.description.label(class="form-label") }}
+                                    {{ form.description(class="form-control", rows="3") }}
+                                    {% if form.description.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.description.errors %}
+                                                <small>{{ error }}</small><br>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Content -->
+                                <div class="mb-3">
+                                    {{ form.content.label(class="form-label") }}
+                                    {{ form.content(class="form-control", rows="10", placeholder="Detailed project description, features, challenges, etc.") }}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <!-- Image -->
+                                <div class="mb-3">
+                                    {{ form.image.label(class="form-label") }}
+                                    {{ form.image(class="form-control") }}
+                                    {% if project and project.image_url %}
+                                    <div class="mt-2">
+                                        <img src="{{ url_for('static', filename=project.image_url) }}" 
+                                             alt="Current image" class="img-fluid img-thumbnail">
+                                        <small class="text-muted d-block">Current image</small>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Category -->
+                                <div class="mb-3">
+                                    {{ form.category_id.label(class="form-label") }}
+                                    {{ form.category_id(class="form-select") }}
+                                </div>
+                                
+                                <!-- Technologies -->
+                                <div class="mb-3">
+                                    {{ form.technologies.label(class="form-label") }}
+                                    {{ form.technologies(class="form-control", placeholder="React, Python, Flask") }}
+                                    <small class="text-muted">Separate technologies with commas</small>
+                                </div>
+                                
+                                <!-- URLs -->
+                                <div class="mb-3">
+                                    {{ form.demo_url.label(class="form-label") }}
+                                    {{ form.demo_url(class="form-control", placeholder="https://example.com") }}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    {{ form.github_url.label(class="form-label") }}
+                                    {{ form.github_url(class="form-control", placeholder="https://github.com/username/repo") }}
+                                </div>
+                                
+                                <!-- Checkboxes -->
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        {{ form.is_featured(class="form-check-input") }}
+                                        {{ form.is_featured.label(class="form-check-label") }}
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        {{ form.is_published(class="form-check-input") }}
+                                        {{ form.is_published.label(class="form-check-label") }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                {% if project %}
+                                <form method="POST" action="{{ url_for('admin_delete_project', id=project.id) }}" 
+                                      class="d-inline" onsubmit="return confirm('Are you sure you want to delete this project?')">
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="fas fa-trash me-2"></i>Delete Project
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                            
+                            <div>
+                                <a href="{{ url_for('admin_projects') }}" class="btn btn-secondary me-2">Cancel</a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>{{ 'Update' if project else 'Create' }} Project
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

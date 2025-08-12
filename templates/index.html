@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Hero Section -->
+    <section class="hero-section bg-gradient-dark text-white">
+        <div class="container">
+            <div class="row align-items-center min-vh-100">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">
+                        Hi, I'm <span class="text-gold">Alexis Daniel</span>
+                    </h1>
+                    <p class="lead mb-4">
+                        Full Stack Developer passionate about creating innovative digital solutions 
+                        and bringing ideas to life through code.
+                    </p>
+                    <div class="d-flex gap-3">
+                        <a href="{{ url_for('projects') }}" class="btn btn-gold btn-lg">
+                            <i class="fas fa-folder-open me-2"></i>View My Work
+                        </a>
+                        <a href="{{ url_for('about') }}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-user me-2"></i>About Me
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="hero-image">
+                        <i class="fas fa-laptop-code display-1 text-gold"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Projects Section -->
+    {% if featured_projects %}
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="section-title">Featured Projects</h2>
+                    <p class="text-muted">Showcasing my best work and latest innovations</p>
+                </div>
+            </div>
+            <div class="row">
+                {% for project in featured_projects %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="project-card h-100">
+                        {% if project.image_url %}
+                        <div class="project-image">
+                            <img src="{{ url_for('static', filename=project.image_url) }}" 
+                                 alt="{{ project.title }}" class="img-fluid">
+                        </div>
+                        {% endif %}
+                        <div class="project-content p-4">
+                            <h5 class="project-title">{{ project.title }}</h5>
+                            <p class="project-description">{{ project.description[:120] }}{% if project.description|length > 120 %}...{% endif %}</p>
+                            
+                            {% if project.technologies %}
+                            <div class="project-tech mb-3">
+                                {% for tech in project.technologies.split(',') %}
+                                <span class="badge bg-secondary me-1">{{ tech.strip() }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            
+                            <div class="project-stats mb-3">
+                                <span class="me-3">
+                                    <i class="fas fa-heart text-danger"></i> {{ project.like_count }}
+                                </span>
+                                <span>
+                                    <i class="fas fa-comment text-primary"></i> {{ project.comment_count }}
+                                </span>
+                            </div>
+                            
+                            <a href="{{ url_for('project_detail', id=project.id) }}" class="btn btn-primary">
+                                View Project <i class="fas fa-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Recent Projects Section -->
+    {% if recent_projects %}
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="section-title">Recent Projects</h2>
+                    <p class="text-muted">Latest additions to my portfolio</p>
+                </div>
+            </div>
+            <div class="row">
+                {% for project in recent_projects %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="project-card h-100">
+                        {% if project.image_url %}
+                        <div class="project-image">
+                            <img src="{{ url_for('static', filename=project.image_url) }}" 
+                                 alt="{{ project.title }}" class="img-fluid">
+                        </div>
+                        {% endif %}
+                        <div class="project-content p-4">
+                            <h5 class="project-title">{{ project.title }}</h5>
+                            <p class="project-description">{{ project.description[:120] }}{% if project.description|length > 120 %}...{% endif %}</p>
+                            
+                            <div class="project-stats mb-3">
+                                <span class="me-3">
+                                    <i class="fas fa-heart text-danger"></i> {{ project.like_count }}
+                                </span>
+                                <span>
+                                    <i class="fas fa-comment text-primary"></i> {{ project.comment_count }}
+                                </span>
+                            </div>
+                            
+                            <a href="{{ url_for('project_detail', id=project.id) }}" class="btn btn-outline-primary">
+                                View Project <i class="fas fa-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            {% if recent_projects|length >= 6 %}
+            <div class="text-center mt-4">
+                <a href="{{ url_for('projects') }}" class="btn btn-gold btn-lg">
+                    View All Projects <i class="fas fa-arrow-right ms-2"></i>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- CTA Section -->
+    <section class="py-5 bg-primary text-white">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-12">
+                    <h2 class="mb-4">Ready to Work Together?</h2>
+                    <p class="lead mb-4">Let's bring your ideas to life with innovative solutions</p>
+                    <a href="mailto:alexis@portfolio.com" class="btn btn-gold btn-lg">
+                        <i class="fas fa-envelope me-2"></i>Get In Touch
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

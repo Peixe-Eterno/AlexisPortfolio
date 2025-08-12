@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}About - Alexis Daniel{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    {% if about_me %}
+    <div class="row">
+        <div class="col-lg-4 mb-5">
+            <div class="about-image text-center">
+                {% if about_me.profile_image %}
+                <img src="{{ url_for('static', filename=about_me.profile_image) }}" 
+                     alt="Alexis Daniel" class="img-fluid rounded-circle profile-img mb-4">
+                {% else %}
+                <div class="profile-placeholder rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center">
+                    <i class="fas fa-user fa-5x text-muted"></i>
+                </div>
+                {% endif %}
+                
+                <h2 class="text-gold mb-3">{{ about_me.title }}</h2>
+                
+                <!-- Contact Info -->
+                <div class="contact-info text-start">
+                    {% if about_me.email %}
+                    <p class="mb-2">
+                        <i class="fas fa-envelope text-primary me-2"></i>
+                        <a href="mailto:{{ about_me.email }}" class="text-decoration-none">{{ about_me.email }}</a>
+                    </p>
+                    {% endif %}
+                    
+                    {% if about_me.phone %}
+                    <p class="mb-2">
+                        <i class="fas fa-phone text-primary me-2"></i>
+                        {{ about_me.phone }}
+                    </p>
+                    {% endif %}
+                    
+                    {% if about_me.location %}
+                    <p class="mb-2">
+                        <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                        {{ about_me.location }}
+                    </p>
+                    {% endif %}
+                </div>
+                
+                <!-- Social Links -->
+                <div class="social-links mt-4">
+                    {% if about_me.linkedin_url %}
+                    <a href="{{ about_me.linkedin_url }}" target="_blank" class="btn btn-outline-primary me-2">
+                        <i class="fab fa-linkedin"></i> LinkedIn
+                    </a>
+                    {% endif %}
+                    
+                    {% if about_me.github_url %}
+                    <a href="{{ about_me.github_url }}" target="_blank" class="btn btn-outline-dark">
+                        <i class="fab fa-github"></i> GitHub
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-8">
+            <div class="about-content">
+                <h1 class="mb-4">About Me</h1>
+                <div class="content-text">
+                    {{ about_me.content|safe }}
+                </div>
+                
+                <!-- Skills Section -->
+                <div class="skills-section mt-5">
+                    <h3 class="mb-4">Technical Skills</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="skill-category mb-4">
+                                <h5 class="text-gold">Frontend</h5>
+                                <div class="skills-list">
+                                    <span class="badge bg-secondary me-2 mb-2">HTML5</span>
+                                    <span class="badge bg-secondary me-2 mb-2">CSS3</span>
+                                    <span class="badge bg-secondary me-2 mb-2">JavaScript</span>
+                                    <span class="badge bg-secondary me-2 mb-2">React</span>
+                                    <span class="badge bg-secondary me-2 mb-2">Bootstrap</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="skill-category mb-4">
+                                <h5 class="text-gold">Backend</h5>
+                                <div class="skills-list">
+                                    <span class="badge bg-secondary me-2 mb-2">Python</span>
+                                    <span class="badge bg-secondary me-2 mb-2">Flask</span>
+                                    <span class="badge bg-secondary me-2 mb-2">Django</span>
+                                    <span class="badge bg-secondary me-2 mb-2">Node.js</span>
+                                    <span class="badge bg-secondary me-2 mb-2">PostgreSQL</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- CTA -->
+                <div class="mt-5">
+                    <a href="{{ url_for('projects') }}" class="btn btn-gold btn-lg me-3">
+                        <i class="fas fa-folder-open me-2"></i>View My Projects
+                    </a>
+                    <a href="mailto:{{ about_me.email or 'alexis@portfolio.com' }}" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-envelope me-2"></i>Contact Me
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Default About Section -->
+    <div class="row">
+        <div class="col-12 text-center">
+            <h1 class="mb-4">About Me</h1>
+            <div class="col-lg-8 mx-auto">
+                <div class="profile-placeholder rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center">
+                    <i class="fas fa-user fa-5x text-muted"></i>
+                </div>
+                
+                <h2 class="text-gold mb-4">Alexis Daniel Matto Careaga</h2>
+                
+                <p class="lead mb-4">
+                    Welcome to my digital portfolio! I'm a passionate full-stack developer 
+                    dedicated to creating innovative solutions and bringing ideas to life through code.
+                </p>
+                
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/alexis-daniel-matto-careaga-8033511b9/" target="_blank" class="btn btn-outline-primary me-2">
+                        <i class="fab fa-linkedin"></i> LinkedIn
+                    </a>
+                    <a href="https://github.com/Peixe-Eterno" target="_blank" class="btn btn-outline-dark">
+                        <i class="fab fa-github"></i> GitHub
+                    </a>
+                </div>
+                
+                {% if current_user.is_authenticated and current_user.is_admin %}
+                <div class="mt-4">
+                    <a href="{{ url_for('admin_about') }}" class="btn btn-warning">
+                        <i class="fas fa-edit me-2"></i>Edit About Section
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
