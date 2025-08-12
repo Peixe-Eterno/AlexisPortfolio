@@ -1,151 +1,111 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container-fluid p-0">
-    <!-- Hero Section -->
-    <section class="hero-section bg-gradient-dark text-white">
-        <div class="container">
-            <div class="row align-items-center min-vh-100">
-                <div class="col-lg-6">
-                    <h1 class="display-4 fw-bold mb-4">
-                        Hi, I'm <span class="text-gold">Alexis Daniel</span>
-                    </h1>
-                    <p class="lead mb-4">
-                        Full Stack Developer passionate about creating innovative digital solutions 
-                        and bringing ideas to life through code.
-                    </p>
-                    <div class="d-flex gap-3">
-                        <a href="{{ url_for('projects') }}" class="btn btn-gold btn-lg">
-                            <i class="fas fa-folder-open me-2"></i>View My Work
-                        </a>
-                        <a href="{{ url_for('about') }}" class="btn btn-outline-light btn-lg">
-                            <i class="fas fa-user me-2"></i>About Me
-                        </a>
-                    </div>
-                </div>
-                <div class="col-lg-6 text-center">
-                    <div class="hero-image">
-                        <i class="fas fa-laptop-code display-1 text-gold"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Featured Projects Section -->
-    {% if featured_projects %}
-    <section class="py-5 bg-light">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 text-center mb-5">
-                    <h2 class="section-title">Featured Projects</h2>
-                    <p class="text-muted">Showcasing my best work and latest innovations</p>
-                </div>
-            </div>
-            <div class="row">
-                {% for project in featured_projects %}
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="project-card h-100">
-                        {% if project.image_url %}
-                        <div class="project-image">
-                            <img src="{{ url_for('static', filename=project.image_url) }}" 
-                                 alt="{{ project.title }}" class="img-fluid">
+<div class="modern-portfolio">
+    <!-- Main Hero Section -->
+    <section class="hero-fullscreen">
+        <div class="container-fluid h-100">
+            <div class="row h-100">
+                <!-- Left Content -->
+                <div class="col-lg-8 d-flex flex-column justify-content-center px-5">
+                    <div class="hero-content">
+                        <div class="welcome-text mb-4">
+                            <h1 class="hero-title">Welcome.</h1>
                         </div>
-                        {% endif %}
-                        <div class="project-content p-4">
-                            <h5 class="project-title">{{ project.title }}</h5>
-                            <p class="project-description">{{ project.description[:120] }}{% if project.description|length > 120 %}...{% endif %}</p>
-                            {% if project.technologies %}
-                            <div class="project-tech mb-3">
-                                {% for tech in project.technologies.split(',') %}
-                                <span class="badge bg-secondary me-1">{{ tech.strip() }}</span>
+                        
+                        <div class="hero-description">
+                            <p class="lead-text mb-4">
+                                Meu nome é Alexis Daniel, sou um desenvolvedor full-stack baseado no Brasil.
+                                Tenho desenvolvido diversos tipos de front-ends desde aplicações web até 
+                                plataformas de e-commerce e sistemas de reserva.
+                            </p>
+                            
+                            <p class="secondary-text mb-5">
+                                Sou apaixonado por criar código elegante, interfaces pixel-perfect e belas 
+                                experiências implementadas de forma intuitiva.
+                            </p>
+                        </div>
+
+                        <div class="hero-actions">
+                            <a href="{{ url_for('projects') }}" class="btn-modern btn-modern-primary me-4">
+                                Ver Projetos
+                            </a>
+                            <a href="{{ url_for('about') }}" class="btn-modern btn-modern-secondary">
+                                Sobre Mim
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Projects Panel -->
+                <div class="col-lg-4 projects-sidebar">
+                    <div class="projects-panel h-100">
+                        <div class="projects-header">
+                            <h3 class="projects-title">Projetos</h3>
+                        </div>
+                        
+                        <div class="projects-list">
+                            {% if featured_projects %}
+                                {% for project in featured_projects[:5] %}
+                                <div class="project-item">
+                                    <a href="{{ url_for('project_detail', id=project.id) }}" class="project-link">
+                                        <span class="project-name">{{ project.title }}</span>
+                                        <i class="fas fa-arrow-right project-arrow"></i>
+                                    </a>
+                                </div>
                                 {% endfor %}
-                            </div>
+                            {% else %}
+                                <div class="project-item">
+                                    <span class="project-name">Portfolio Website</span>
+                                    <i class="fas fa-arrow-right project-arrow"></i>
+                                </div>
+                                <div class="project-item">
+                                    <span class="project-name">E-commerce Platform</span>
+                                    <i class="fas fa-arrow-right project-arrow"></i>
+                                </div>
+                                <div class="project-item">
+                                    <span class="project-name">Mobile App Design</span>
+                                    <i class="fas fa-arrow-right project-arrow"></i>
+                                </div>
                             {% endif %}
-                            <div class="project-stats mb-3">
-                                <span class="me-3">
-                                    <i class="fas fa-heart text-danger"></i> {{ project.like_count }}
-                                </span>
-                                <span>
-                                    <i class="fas fa-comment text-primary"></i> {{ project.comment_count }}
-                                </span>
+                            
+                            <div class="project-item view-all">
+                                <a href="{{ url_for('projects') }}" class="project-link">
+                                    <span class="project-name">Ver todos os projetos</span>
+                                    <i class="fas fa-external-link-alt project-arrow"></i>
+                                </a>
                             </div>
-                            <a href="{{ url_for('project_detail', id=project.id) }}" class="btn btn-primary">
-                                View Project <i class="fas fa-arrow-right ms-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Footer -->
+    <section class="contact-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <div class="contact-info">
+                        <p class="contact-text">© 2025 Alexis Daniel</p>
+                        <div class="social-links">
+                            <a href="mailto:alexis@portfolio.com" class="social-link">
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                            <a href="#" class="social-link">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="#" class="social-link">
+                                <i class="fab fa-linkedin"></i>
                             </a>
                         </div>
                     </div>
                 </div>
-                {% endfor %}
             </div>
         </div>
     </section>
-    {% endif %}
 
-    <!-- Recent Projects Section -->
-    {% if recent_projects %}
-    <section class="py-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 text-center mb-5">
-                    <h2 class="section-title">Recent Projects</h2>
-                    <p class="text-muted">Latest additions to my portfolio</p>
-                </div>
-            </div>
-            <div class="row">
-                {% for project in recent_projects %}
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="project-card h-100">
-                        {% if project.image_url %}
-                        <div class="project-image">
-                            <img src="{{ url_for('static', filename=project.image_url) }}" 
-                                 alt="{{ project.title }}" class="img-fluid">
-                        </div>
-                        {% endif %}
-                        <div class="project-content p-4">
-                            <h5 class="project-title">{{ project.title }}</h5>
-                            <p class="project-description">{{ project.description[:120] }}{% if project.description|length > 120 %}...{% endif %}</p>
-                            <div class="project-stats mb-3">
-                                <span class="me-3">
-                                    <i class="fas fa-heart text-danger"></i> {{ project.like_count }}
-                                </span>
-                                <span>
-                                    <i class="fas fa-comment text-primary"></i> {{ project.comment_count }}
-                                </span>
-                            </div>
-                            <a href="{{ url_for('project_detail', id=project.id) }}" class="btn btn-outline-primary">
-                                View Project <i class="fas fa-arrow-right ms-1"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            
-            {% if recent_projects|length >= 6 %}
-            <div class="text-center mt-4">
-                <a href="{{ url_for('projects') }}" class="btn btn-gold btn-lg">
-                    View All Projects <i class="fas fa-arrow-right ms-2"></i>
-                </a>
-            </div>
-            {% endif %}
-        </div>
-    </section>
-    {% endif %}
 
-    <!-- CTA Section -->
-    <section class="py-5 bg-primary text-white">
-        <div class="container">
-            <div class="row text-center">
-                <div class="col-12">
-                    <h2 class="mb-4">Ready to Work Together?</h2>
-                    <p class="lead mb-4">Let's bring your ideas to life with innovative solutions</p>
-                    <a href="mailto:alexis@portfolio.com" class="btn btn-gold btn-lg">
-                        <i class="fas fa-envelope me-2"></i>Get In Touch
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
 </div>
 {% endblock %}
