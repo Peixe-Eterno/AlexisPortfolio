@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}Projetos - Alexis Daniel{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Header Section -->
+    <section class="py-5 bg-primary text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h1 class="display-4 fw-bold mb-3">Meus Projetos</h1>
+                    <p class="lead">Explore meu portfólio de soluções inovadoras e projetos em desenvolvimento</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filter Section -->
+    <section class="py-4 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex flex-wrap justify-content-center gap-2">
+                        <a href="{{ url_for('projects') }}" class="btn btn-outline-primary {% if not selected_category %}active{% endif %}">
+                            Todos
+                        </a>
+                        {% for category in categories %}
+                        <a href="{{ url_for('projects', category=category.id) }}" 
+                           class="btn btn-outline-primary {% if selected_category and selected_category.id == category.id %}active{% endif %}">
+                            {{ category.name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Grid -->
+    <section class="py-5">
+        <div class="container">
+            {% if projects %}
+            <div class="row">
+                {% for project in projects %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="project-card h-100">
+                        {% if project.image_url %}
+                        <div class="project-image">
+                            <img src="{{ url_for('static', filename=project.image_url) }}" 
+                                 alt="{{ project.title }}" class="img-fluid">
+                        </div>
+                        {% endif %}
+                        <div class="project-content p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="project-title">{{ project.title }}</h5>
+                                {% if project.featured %}
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-star"></i> Destaque
+                                </span>
+                                {% endif %}
+                            </div>
+                            
+                            {% if project.category %}
+                            <span class="badge bg-primary mb-2">{{ project.category.name }}</span>
+                            {% endif %}
+                            
+                            <p class="project-description text-muted mb-3">
+                                {{ project.description[:150] }}{% if project.description|length > 150 %}...{% endif %}
+                            </p>
+                            
+                            {% if project.technologies %}
+                            <div class="project-tech mb-3">
+                                {% for tech in project.technologies.split(',') %}
+                                <span class="badge bg-secondary me-1 mb-1">{{ tech.strip() }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            
+                            <div class="project-stats mb-3 d-flex justify-content-between">
+                                <div>
+                                    <span class="me-3">
+                                        <i class="fas fa-heart text-danger"></i> {{ project.like_count }}
+                                    </span>
+                                    <span>
+                                        <i class="fas fa-comment text-primary"></i> {{ project.comment_count }}
+                                    </span>
+                                </div>
+                                <small class="text-muted">
+                                    {{ project.created_at.strftime('%d/%m/%Y') }}
+                                </small>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('project_detail', id=project.id) }}" 
+                                   class="btn btn-primary flex-fill">
+                                    <i class="fas fa-eye me-1"></i>Ver Projeto
+                                </a>
+                                {% if project.live_url %}
+                                <a href="{{ project.live_url }}" target="_blank" 
+                                   class="btn btn-outline-success" title="Ver site ao vivo">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                                {% endif %}
+                                {% if project.github_url %}
+                                <a href="{{ project.github_url }}" target="_blank" 
+                                   class="btn btn-outline-dark" title="Ver código no GitHub">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            {% if projects.pages > 1 %}
+            <div class="row mt-5">
+                <div class="col-12">
+                    <nav aria-label="Navegação de projetos">
+                        <ul class="pagination justify-content-center">
+                            {% if projects.has_prev %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('projects', page=projects.prev_num, category=selected_category.id if selected_category else None) }}">
+                                    <i class="fas fa-chevron-left"></i> Anterior
+                                </a>
+                            </li>
+                            {% endif %}
+                            
+                            {% for page_num in projects.iter_pages() %}
+                                {% if page_num %}
+                                    {% if page_num != projects.page %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('projects', page=page_num, category=selected_category.id if selected_category else None) }}">{{ page_num }}</a>
+                                    </li>
+                                    {% else %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ page_num }}</span>
+                                    </li>
+                                    {% endif %}
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">...</span>
+                                </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if projects.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('projects', page=projects.next_num, category=selected_category.id if selected_category else None) }}">
+                                    Próximo <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% else %}
+            <!-- Empty State -->
+            <div class="row">
+                <div class="col-12 text-center py-5">
+                    <div class="empty-state">
+                        <i class="fas fa-folder-open display-1 text-muted mb-4"></i>
+                        <h3 class="mb-3">Nenhum projeto encontrado</h3>
+                        {% if selected_category %}
+                        <p class="text-muted mb-4">Não há projetos na categoria "{{ selected_category.name }}" no momento.</p>
+                        <a href="{{ url_for('projects') }}" class="btn btn-primary">
+                            Ver todos os projetos
+                        </a>
+                        {% else %}
+                        <p class="text-muted">Os projetos serão exibidos aqui em breve.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+</div>
+{% endblock %}

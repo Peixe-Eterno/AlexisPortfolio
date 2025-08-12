@@ -55,7 +55,6 @@
                         <div class="project-content p-4">
                             <h5 class="project-title">{{ project.title }}</h5>
                             <p class="project-description">{{ project.description[:120] }}{% if project.description|length > 120 %}...{% endif %}</p>
-                            
                             {% if project.technologies %}
                             <div class="project-tech mb-3">
                                 {% for tech in project.technologies.split(',') %}
@@ -63,7 +62,6 @@
                                 {% endfor %}
                             </div>
                             {% endif %}
-                            
                             <div class="project-stats mb-3">
                                 <span class="me-3">
                                     <i class="fas fa-heart text-danger"></i> {{ project.like_count }}
@@ -72,7 +70,6 @@
                                     <i class="fas fa-comment text-primary"></i> {{ project.comment_count }}
                                 </span>
                             </div>
-                            
                             <a href="{{ url_for('project_detail', id=project.id) }}" class="btn btn-primary">
                                 View Project <i class="fas fa-arrow-right ms-1"></i>
                             </a>
@@ -108,7 +105,6 @@
                         <div class="project-content p-4">
                             <h5 class="project-title">{{ project.title }}</h5>
                             <p class="project-description">{{ project.description[:120] }}{% if project.description|length > 120 %}...{% endif %}</p>
-                            
                             <div class="project-stats mb-3">
                                 <span class="me-3">
                                     <i class="fas fa-heart text-danger"></i> {{ project.like_count }}
@@ -117,7 +113,6 @@
                                     <i class="fas fa-comment text-primary"></i> {{ project.comment_count }}
                                 </span>
                             </div>
-                            
                             <a href="{{ url_for('project_detail', id=project.id) }}" class="btn btn-outline-primary">
                                 View Project <i class="fas fa-arrow-right ms-1"></i>
                             </a>

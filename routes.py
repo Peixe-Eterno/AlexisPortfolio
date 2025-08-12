@@ -29,15 +29,17 @@ def projects():
     category_id = request.args.get('category', type=int)
     
     query = Project.query.filter_by(is_published=True)
+    selected_category = None
     if category_id:
         query = query.filter_by(category_id=category_id)
+        selected_category = Category.query.get(category_id)
     
     projects = query.order_by(Project.created_at.desc()).paginate(
         page=page, per_page=6, error_out=False)
     
     categories = Category.query.all()
     return render_template('projects.html', projects=projects, categories=categories, 
-                         selected_category=category_id)
+                         selected_category=selected_category)
 
 @app.route('/project/<int:id>')
 def project_detail(id):
