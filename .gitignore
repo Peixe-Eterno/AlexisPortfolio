@@ -1,0 +1,17 @@
+node_modules/
+virtual_env/
+virtualenv/
+virtualenv_python/
+virtualenv_pypy/
+virtualenv_jython/
+virtualenv_stackless/
+virtualenv_pypy3/
+virtualenv_jython3/
+virtualenv_stackless3/
+venv/
+*.pyc
+__pycache__/
+.DS_Store
+.env
+
+
